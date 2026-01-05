@@ -1,0 +1,16 @@
+/.git
+/node_modules
+/dist
+.DS_Store
+yarn.lock
+package-lock.json
+yarn-error.log
+.scannerwork
+.vscode
+.idea
+.github
+pnpm-lock.yaml
+bundle*.zip
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.github/instructions/snyk_rules.instructions.md
