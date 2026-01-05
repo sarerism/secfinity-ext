@@ -90,7 +90,7 @@ module.exports = {
 				exclude: /node_modules/
 			},
 			{
-				test: /\.(png|svg|jpg|gif)$/,
+				test: /\.(png|svg|jpg|jpeg|gif)$/,
 				include: path.resolve(__dirname, 'src'),
 				use: [ 'file-loader' ]
 			},

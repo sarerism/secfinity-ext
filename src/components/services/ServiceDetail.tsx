@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Button, Input, Form, Divider, Card, Tag, Space, message, Collapse, Row, Col } from 'antd';
-import { ArrowLeftOutlined, CopyOutlined, CheckOutlined, DesktopOutlined } from '@ant-design/icons';
+import { Typography, Button, Input, Form, Divider, Card, Tag, Space, Collapse, Row, Col } from 'antd';
+import { ArrowLeftOutlined, DesktopOutlined } from '@ant-design/icons';
 import { Service, replaceCommandVariables } from '../../utils/services';
 
 const { Title, Paragraph, Text } = Typography;
@@ -19,9 +19,6 @@ export default function ServiceDetail({ service, onBack }: ServiceDetailProps) {
         DOMAIN: '',
     });
 
-    const [copiedCommand, setCopiedCommand] = useState<string | null>(null);
-    const [messageApi, contextHolder] = message.useMessage();
-
     // Update port when service changes
     useEffect(() => {
         setVariables(prev => ({
@@ -35,24 +32,6 @@ export default function ServiceDetail({ service, onBack }: ServiceDetailProps) {
         setVariables(prev => ({ ...prev, [key]: value }));
     };
 
-    // Copy command to clipboard
-    const copyToClipboard = async (command: string, commandId: string) => {
-        const processedCommand = replaceCommandVariables(command, variables);
-        
-        try {
-            await navigator.clipboard.writeText(processedCommand);
-            setCopiedCommand(commandId);
-            messageApi.success('Command copied to clipboard!');
-            
-            // Reset copied state after 2 seconds
-            setTimeout(() => {
-                setCopiedCommand(null);
-            }, 2000);
-        } catch (error) {
-            messageApi.error('Failed to copy command');
-        }
-    };
-
     // Get all commands count
     const totalCommands = service.categories.reduce(
         (total, category) => total + category.commands.length,
@@ -61,7 +40,6 @@ export default function ServiceDetail({ service, onBack }: ServiceDetailProps) {
 
     return (
         <div>
-            {contextHolder}
             
             {/* Header */}
             <div style={{ marginBottom: 24 }}>
@@ -180,7 +158,6 @@ export default function ServiceDetail({ service, onBack }: ServiceDetailProps) {
                         <Space direction="vertical" style={{ width: '100%' }} size="middle">
                             {category.commands.map((cmd) => {
                                 const processedCommand = replaceCommandVariables(cmd.command, variables);
-                                const isCopied = copiedCommand === cmd.id;
 
                                 return (
                                     <Card
@@ -207,36 +184,16 @@ export default function ServiceDetail({ service, onBack }: ServiceDetailProps) {
                                                     </Tag>
                                                 </div>
                                             </div>
-                                            
-                                            <Button
-                                                type={isCopied ? "primary" : "default"}
-                                                icon={isCopied ? <CheckOutlined /> : <CopyOutlined />}
-                                                onClick={() => copyToClipboard(cmd.command, cmd.id)}
-                                                style={{ flexShrink: 0 }}
-                                            >
-                                                {isCopied ? 'Copied!' : 'Copy'}
-                                            </Button>
                                         </div>
 
                                         {/* Command Display */}
-                                        <div 
-                                            className="command-text"
-                                            style={{ 
-                                                background: 'rgba(0, 0, 0, 0.7)',
-                                                color: '#0f0',
-                                                padding: '12px',
-                                                borderRadius: 4,
-                                                fontFamily: 'Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro, monospace',
-                                                fontSize: 13,
-                                                lineHeight: 1.6,
-                                                overflow: 'auto',
-                                                whiteSpace: 'pre-wrap',
-                                                wordBreak: 'break-all',
-                                                userSelect: 'all'
-                                            }}
-                                        >
-                                            {processedCommand}
-                                        </div>
+                                        <Paragraph>
+                                            <pre>
+                                                <Text copyable>
+                                                    {processedCommand}
+                                                </Text>
+                                            </pre>
+                                        </Paragraph>
                                     </Card>
                                 );
                             })}
